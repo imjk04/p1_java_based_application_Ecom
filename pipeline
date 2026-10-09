@@ -1,0 +1,26 @@
+pipeline {
+    agent any
+    tools { maven 'mymaven'}
+    stages {
+        stage('Code-Checkout'){
+            steps{
+                git 'https://github.com/imjk04/p1_java_based_application_Ecom.git'
+            }
+        }
+        stage('Build'){
+            steps{
+                sh 'mvn clean install'
+            }
+        }
+        stage('Artifact'){
+            steps{
+                nexusArtifactUploader artifacts: [[artifactId: 'myweb', classifier: '', file: 'target/myweb-8.7.3.war', type: 'war']], credentialsId: 'nexus-cred', groupId: 'in.javahome', nexusUrl: '44.199.253.141:8081', nexusVersion: 'nexus3', protocol: 'http', repository: 'nexusrepo', version: '8.7.3'
+            }
+        }
+        stage('Deploy'){
+            steps{
+                deploy adapters: [tomcat9(alternativeDeploymentContext: '', credentialsId: 'tomcat-cred', path: '', url: 'http://32.197.188.174:8080')], contextPath: 'application', onFailure: false, war: 'target/*.war'
+            }
+        }
+    }
+}
