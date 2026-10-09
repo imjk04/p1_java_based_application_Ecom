@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent { label 'dev'}
     tools { maven 'mymaven'}
     stages {
         stage('Code-Checkout'){
